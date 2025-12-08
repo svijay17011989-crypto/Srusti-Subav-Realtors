@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Srusti Subav Realtors — Real Estate</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f8fff8;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: #0f8a3d;
+      color: white;
+      padding: 15px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .navbar .logo {
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .menu a {
+      color: white;
+      margin-left: 20px;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .menu a:hover {
+      text-decoration: underline;
+    }
+
+    .admin-btn {
+      background: white;
+      color: #0f8a3d !important;
+      padding: 6px 12px;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+
+    /* ========================================== */
+    /*              HERO SLIDESHOW                */
+    /* ========================================== */
+
+    .hero-slider {
+      position: relative;
+      height: 45vh;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 1.4s ease-in-out;
+    }
+
+    .slide-content {
+      position: absolute;
+      bottom: 20%;
+      width: 100%;
+      text-align: center;
+      color: white;
+      text-shadow: 0 3px 10px rgba(0,0,0,0.6);
+    }
+
+    .slide-content h1 {
+      font-size: 40px;
+      margin: 0;
+    }
+
+    .slide-content p {
+      margin-top: 10px;
+      font-size: 18px;
+    }
+
+    .fade.active {
+      opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+      .hero-slider {
+        height: 35vh;
+      }
+      .slide-content h1 {
+        font-size: 26px;
+      }
+      .slide-content p {
+        font-size: 14px;
+      }
+    }
+
+
+    /* Property Container */
+    .container {
+      padding: 30px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    }
+
+    /* Cards */
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+    }
+
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .card:hover img {
+      transform: scale(1.07);
+    }
+
+    .card-body {
+      padding: 15px;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 0 0 8px;
+    }
+
+    .price {
+      color: #0f8a3d;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 4px;
+      color: white;
+      font-size: 12px;
+    }
+
+    .available {
+      background: #0f8a3d;
+    }
+
+    .sold {
+      background: #c70000;
+    }
+
+
+    /* SHIMMER LOADING */
+    .shimmer-card {
+      height: 260px;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #eeeeee 0%, #dddddd 50%, #eeeeee 100%);
+      animation: shimmer 1.4s infinite linear;
+      background-size: 600px 100%;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -300px 0; }
+      100% { background-position: 300px 0; }
+    }
+
+
+    /* CONTACT SECTION */
+    .contact-section {
+      padding: 40px;
+      background: #f0fff0;
+    }
+
+    .contact-section h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #0f8a3d;
+    }
+
+    .contact-box {
+      display: flex;
+      gap: 30px;
+      max-width: 1000px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .contact-box input,
+    .contact-box textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+
+    /* FLOATING SHARE BUTTON */
+    .share-btn {
+      position: fixed;
+      bottom: 95px;
+      right: 25px;
+      width: 55px;
+      height: 55px;
+      background: #0f8a3d;
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 55px;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 200;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      transition: 0.3s;
+    }
+
+    .share-btn:hover {
+      transform: scale(1.1);
+    }
+
+
+    /* BACK TO TOP */
+    .back-top {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      width: 55px;
+      height: 55px;
+      background: black;
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 55px;
+      font-size: 22px;
+      cursor: pointer;
+      z-index: 200;
+      transition: 0.3s;
+    }
+
+    .back-top:hover {
+      transform: scale(1.1);
+    }
+
+
+    /* WHATSAPP BUTTON */
+    .whatsapp-float {
+      position: fixed;
+      width: 55px;
+      height: 55px;
+      bottom: 165px;
+      right: 25px;
+      background-color: #25d366;
+      color: white;
+      border-radius:50%;
+      text-align:center;
+      font-size:30px;
+      line-height:55px;
+      text-decoration:none;
+      box-shadow:0 2px 8px rgba(0,0,0,0.25);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="logo">Srusti Subav Realtors</div>
+
+    <div class="menu">
+      <a href="#hero">Home</a>
+      <a href="#propertySection">Properties</a>
+      <a href="#contact">Contact</a>
+      <a href="/admin.html" class="admin-btn">Admin</a>
+    </div>
+  </div>
+
+
+  <!-- HERO SLIDESHOW -->
+  <div class="hero-slider">
+
+    <div class="slide fade" style="background-image: url('https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1200&q=60');">
+      <div class="slide-content">
+        <h1>Your Dream Property Awaits</h1>
+        <p>Explore premium lands, plots and investment opportunities</p>
+      </div>
+    </div>
+
+    <div class="slide fade" style="background-image: url('https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=1200&q=60');">
+      <div class="slide-content">
+        <h1>Premium DTCP Approved Plots</h1>
+        <p>Best investment opportunities in Coimbatore</p>
+      </div>
+    </div>
+
+    <div class="slide fade" style="background-image: url('https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=60');">
+      <div class="slide-content">
+        <h1>Trusted Real Estate Services</h1>
+        <p>We help you find safe and reliable properties</p>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- Properties -->
+  <div class="container" id="propertySection">
+    <h2>Available Properties</h2>
+
+    <div class="grid" id="propertyGrid">
+      <div class="shimmer-card"></div>
+      <div class="shimmer-card"></div>
+      <div class="shimmer-card"></div>
+      <div class="shimmer-card"></div>
+    </div>
+  </div>
+
+
+  <!-- Contact Section -->
+  <div id="contact" class="contact-section">
+    <h2>Contact Us</h2>
+
+    <div class="contact-box">
+      <div class="left">
+        <h3>Get in Touch</h3>
+        <p><strong>Phone:</strong> +91 8466069839</p>
+        <p><strong>Email:</strong> info@srustisubavrealtors.com</p>
+        <p><strong>Location:</strong> Coimbatore, Tamil Nadu, India</p>
+        <p><strong>Office Hours:</strong> 9:00 AM – 7:00 PM</p>
+      </div>
+
+      <div class="right">
+        <h3>Send a Message</h3>
+        <input type="text" placeholder="Your Name" id="cname" />
+        <input type="email" placeholder="Your Email" id="cemail" />
+        <textarea placeholder="Your Message" id="cmessage"></textarea>
+        <button onclick="sendMsg()">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    © 2025 Srusti Subav Realtors — All Rights Reserved
+  </footer>
+
+
+  <!-- LOAD PROPERTIES -->
+  <script>
+    async function loadProperties() {
+      try {
+        const res = await fetch("/api/properties");
+        const data = await res.json();
+
+        const grid = document.getElementById("propertyGrid");
+        grid.innerHTML = "";
+
+        data.forEach((p) => {
+          const img = p.images?.length ? p.images[0] : "https://via.placeholder.com/300x200";
+
+          grid.innerHTML += `
+            <div class="card" onclick="openProperty('${p._id}')">
+              <img src="${img}" />
+              <div class="card-body">
+                <div class="title">${p.title}</div>
+                <div class="price">₹ ${p.price}</div>
+                <div>Facing: ${p.landFacing || "-"}</div>
+                <div>Size: ${p.measurements || "-"}</div>
+                <span class="status ${p.status}">${p.status.toUpperCase()}</span>
+              </div>
+            </div>`;
+        });
+      } catch (err) {
+        console.error("Error loading properties:", err);
+      }
+    }
+
+    function openProperty(id) {
+      window.location.href = `/property.html?id=${id}`;
+    }
+
+    loadProperties();
+  </script>
+
+
+  <!-- CONTACT FORM -->
+  <script>
+    function sendMsg() {
+      const name = cname.value.trim();
+      const email = cemail.value.trim();
+      const msg = cmessage.value.trim();
+
+      if (!name || !email || !msg) {
+        alert("Please fill all fields");
+        return;
+      }
+
+      alert("Thank you " + name + "! Your message has been received.");
+      cname.value = "";
+      cemail.value = "";
+      cmessage.value = "";
+    }
+  </script>
+
+
+  <!-- FLOATING BUTTONS -->
+  <a href="https://wa.me/918466069839" class="whatsapp-float">💬</a>
+  <div class="share-btn" onclick="navigator.clipboard.writeText(window.location.href); alert('Website link copied!');">⤴</div>
+  <div class="back-top" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });">↑</div>
+
+
+  <!-- SLIDESHOW SCRIPT -->
+  <script>
+    let slideIndex = 0;
+    const slides = document.querySelectorAll(".slide");
+
+    function showSlides() {
+      slides.forEach(s => s.classList.remove("active"));
+      slideIndex++;
+
+      if (slideIndex > slides.length) slideIndex = 1;
+
+      slides[slideIndex - 1].classList.add("active");
+      setTimeout(showSlides, 4000);
+    }
+
+    showSlides();
+  </script>
+
+</body>
+</html>

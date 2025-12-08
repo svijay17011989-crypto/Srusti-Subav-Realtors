@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Property Details</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f8fff8;
+    }
+
+    .navbar {
+      background: #0f8a3d;
+      color: white;
+      padding: 15px 25px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 25px;
+    }
+
+    /* MAIN IMAGE */
+    .main-image {
+      width: 100%;
+      height: 420px;
+      object-fit: cover;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .main-image:hover {
+      transform: scale(1.02);
+    }
+
+    /* THUMBNAILS */
+    .thumb-row {
+      display: flex;
+      overflow-x: auto;
+      gap: 12px;
+      margin-top: 15px;
+      padding-bottom: 10px;
+    }
+
+    .thumb {
+      width: 110px;
+      height: 75px;
+      object-fit: cover;
+      border-radius: 8px;
+      cursor: pointer;
+      opacity: 0.6;
+      transition: 0.3s;
+      border: 2px solid transparent;
+    }
+
+    .thumb:hover {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+
+    .thumb.active {
+      opacity: 1;
+      border: 2px solid #0f8a3d;
+    }
+
+    /* PROPERTY INFO */
+    .title {
+      font-size: 28px;
+      font-weight: bold;
+      margin-top: 25px;
+      color: #0f8a3d;
+    }
+
+    .price {
+      font-size: 24px;
+      color: #0f8a3d;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .info-box {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    /* LIGHTBOX */
+    .lightbox {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+    }
+
+    .lightbox img {
+      width: 85%;
+      max-height: 85vh;
+      object-fit: contain;
+      border-radius: 10px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 25px;
+      right: 25px;
+      font-size: 38px;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="navbar">Property Details</div>
+
+  <div class="container">
+
+    <!-- MAIN IMAGE -->
+    <img id="mainImage" class="main-image" onclick="openLightbox()" />
+
+    <!-- THUMBNAILS -->
+    <div id="thumbRow" class="thumb-row"></div>
+
+    <!-- INFO -->
+    <div class="title" id="pTitle"></div>
+    <div class="price" id="pPrice"></div>
+
+    <div class="info-box">
+      <p><strong>Size:</strong> <span id="pSize"></span></p>
+      <p><strong>Facing:</strong> <span id="pFacing"></span></p>
+      <p><strong>Status:</strong> <span id="pStatus"></span></p>
+      <p><strong>About Property:</strong></p>
+      <p id="pDesc"></p>
+    </div>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+    <span class="close-btn">&times;</span>
+    <img id="lightboxImg" />
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const propertyId = params.get("id");
+
+    async function loadProperty() {
+      try {
+        const res = await fetch(`/api/properties/${propertyId}`);
+        const p = await res.json();
+
+        // BASIC INFO
+        document.getElementById("pTitle").innerText = p.title;
+        document.getElementById("pPrice").innerText = "₹ " + p.price;
+        document.getElementById("pSize").innerText = p.measurements;
+        document.getElementById("pFacing").innerText = p.landFacing;
+        document.getElementById("pStatus").innerText = p.status.toUpperCase();
+        document.getElementById("pDesc").innerText = p.description;
+
+        // IMAGES
+        const mainImage = document.getElementById("mainImage");
+        const thumbRow = document.getElementById("thumbRow");
+
+        mainImage.src = p.images[0];
+        document.getElementById("lightboxImg").src = p.images[0];
+
+        thumbRow.innerHTML = "";
+        p.images.forEach((img, index) => {
+          const t = document.createElement("img");
+          t.src = img;
+          t.className = "thumb";
+          if (index === 0) t.classList.add("active");
+
+          t.onclick = () => {
+            mainImage.src = img;
+            document.getElementById("lightboxImg").src = img;
+
+            document.querySelectorAll(".thumb").forEach(el => el.classList.remove("active"));
+            t.classList.add("active");
+          };
+
+          thumbRow.appendChild(t);
+        });
+
+      } catch (err) {
+        console.error("Error loading property:", err);
+      }
+    }
+
+    loadProperty();
+
+    // LIGHTBOX
+    function openLightbox() {
+      document.getElementById("lightbox").style.display = "flex";
+    }
+    function closeLightbox() {
+      document.getElementById("lightbox").style.display = "none";
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel — Srusti Subav Realtors</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f7fff7;
+    }
+
+    .navbar {
+      background: #0f8a3d;
+      color: white;
+      padding: 15px 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .tabs {
+      display: flex;
+      background: #e9ffe9;
+      padding: 10px 20px;
+      border-bottom: 2px solid #0f8a3d;
+    }
+
+    .tab {
+      margin-right: 20px;
+      padding: 8px 15px;
+      cursor: pointer;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
+    .tab.active {
+      background: #0f8a3d;
+      color: white;
+    }
+
+    .section {
+      display: none;
+      padding: 20px;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background: #0f8a3d;
+      color: white;
+      padding: 10px 18px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0c6b2f;
+    }
+
+    /* LIST TABLE */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+
+    th {
+      background: #0f8a3d;
+      color: white;
+      padding: 10px;
+    }
+
+    td {
+      padding: 10px;
+    }
+
+    .action-btn {
+      padding: 6px 10px;
+      font-size: 13px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .edit-btn {
+      background: #007bff;
+      color: white;
+    }
+
+    .delete-btn {
+      background: #d10f0f;
+      color: white;
+    }
+
+    /* EDIT MODAL */
+    .modal-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .modal {
+      background: white;
+      width: 500px;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .close-modal {
+      color: red;
+      font-weight: bold;
+      float: right;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="navbar">Admin Panel — Srusti Subav Realtors</div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('add')">Add Property</div>
+    <div class="tab" onclick="showTab('list')">Manage Properties</div>
+  </div>
+
+  <!-- Add Property Section -->
+  <div id="add" class="section active">
+    <h2>Add New Property</h2>
+
+    <input id="title" placeholder="Property Title" />
+    <textarea id="description" placeholder="Description"></textarea>
+    <input id="price" placeholder="Price" />
+    <input id="measurements" placeholder="Measurements (e.g., 40x60)" />
+    <input id="facing" placeholder="Land Facing (East/West/North/South)" />
+
+    <label>Upload Images (max 5)</label>
+    <input id="images" type="file" multiple />
+
+    <button onclick="uploadAndCreate()">Submit</button>
+  </div>
+
+  <!-- Manage Properties Section -->
+  <div id="list" class="section">
+    <h2>Manage Properties</h2>
+
+    <table id="propTable">
+      <tr>
+        <th>Title</th>
+        <th>Price</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </table>
+  </div>
+
+  <!-- EDIT MODAL -->
+  <div class="modal-bg" id="editModal">
+    <div class="modal">
+      <span class="close-modal" onclick="closeEdit()">X</span>
+      <h3>Edit Property</h3>
+
+      <input id="editTitle" placeholder="Title" />
+      <textarea id="editDescription" placeholder="Description"></textarea>
+      <input id="editPrice" placeholder="Price" />
+      <input id="editMeasurements" placeholder="Measurements" />
+      <input id="editFacing" placeholder="Land Facing" />
+      <select id="editStatus">
+        <option value="available">Available</option>
+        <option value="sold">Sold</option>
+      </select>
+
+      <button onclick="updateProperty()">Save Changes</button>
+    </div>
+  </div>
+
+<script>
+let TOKEN = localStorage.getItem("adminToken");
+let EDIT_ID = "";
+
+// Switch Tabs
+function showTab(tab) {
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+
+  document.querySelector(`.tab[onclick="showTab('${tab}')"]`).classList.add("active");
+  document.getElementById(tab).classList.add("active");
+
+  if (tab === "list") loadProperties();
+}
+
+// Upload Images + Create Property
+async function uploadAndCreate() {
+  const files = document.getElementById("images").files;
+  let imageUrls = [];
+
+  if (files.length) {
+    const formData = new FormData();
+    for (let f of files) formData.append("images", f);
+
+    const res = await fetch("/api/admin/upload", {
+      method: "POST",
+      headers: { Authorization: "Bearer " + TOKEN },
+      body: formData,
+    });
+
+    const data = await res.json();
+    imageUrls = data.urls;
+  }
+
+  const body = {
+    title: title.value,
+    description: description.value,
+    price: price.value,
+    measurements: measurements.value,
+    landFacing: facing.value,
+    images: imageUrls,
+  };
+
+  const response = await fetch("/api/admin/properties", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + TOKEN,
+    },
+    body: JSON.stringify(body),
+  });
+
+  alert("Property added!");
+  title.value = description.value = price.value = measurements.value = facing.value = "";
+  document.getElementById("images").value = "";
+}
+
+// Load All Properties
+async function loadProperties() {
+  const res = await fetch("/api/properties");
+  const list = await res.json();
+
+  const table = document.getElementById("propTable");
+  table.innerHTML = `
+      <tr>
+        <th>Title</th>
+        <th>Price</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+  `;
+
+  list.forEach(p => {
+    table.innerHTML += `
+      <tr>
+        <td>${p.title}</td>
+        <td>₹ ${p.price}</td>
+        <td>${p.status}</td>
+        <td>
+          <button class="action-btn edit-btn" onclick="openEdit('${p._id}')">Edit</button>
+          <button class="action-btn delete-btn" onclick="deleteProperty('${p._id}')">Delete</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+// Open Edit Modal
+async function openEdit(id) {
+  EDIT_ID = id;
+
+  const res = await fetch(`/api/properties/${id}`);
+  const p = await res.json();
+
+  editTitle.value = p.title;
+  editDescription.value = p.description;
+  editPrice.value = p.price;
+  editMeasurements.value = p.measurements;
+  editFacing.value = p.landFacing;
+  editStatus.value = p.status;
+
+  document.getElementById("editModal").style.display = "flex";
+}
+
+function closeEdit() {
+  document.getElementById("editModal").style.display = "none";
+}
+
+// Save Updated Property
+async function updateProperty() {
+  const body = {
+    title: editTitle.value,
+    description: editDescription.value,
+    price: editPrice.value,
+    measurements: editMeasurements.value,
+    landFacing: editFacing.value,
+    status: editStatus.value,
+  };
+
+  await fetch(`/api/properties/update/${EDIT_ID}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + TOKEN,
+    },
+    body: JSON.stringify(body),
+  });
+
+  alert("Property updated!");
+  closeEdit();
+  loadProperties();
+}
+
+// Delete Property
+async function deleteProperty(id) {
+  if (!confirm("Are you sure? This cannot be undone.")) return;
+
+  await fetch(`/api/properties/delete/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: "Bearer " + TOKEN }
+  });
+
+  alert("Property deleted.");
+  loadProperties();
+}
+</script>
+
+</body>
+</html>
