@@ -119,7 +119,7 @@ app.post("/api/admin/properties", auth, async (req, res) => {
 });
 
 // Load Property Routes
-const propertyRoutes = require("./routes/propertyRoutes");
+const propertyRoutes = require("./backend/routes/propertyRoutes");
 app.use("/api/properties", propertyRoutes);
 
 // Fallback → Always serve index.html for unknown routes
