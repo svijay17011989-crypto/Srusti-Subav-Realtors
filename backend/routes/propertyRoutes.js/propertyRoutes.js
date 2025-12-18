@@ -3,16 +3,18 @@ const router = express.Router();
 const Property = require("../models/Property");
 const adminAuth = require("../middleware/adminAuth");
 
-
-// ---------------------------------------------
-// CREATE Property  (ADMIN)
-// ---------------------------------------------
-router.post("/create", adminAuth, async (req, res) => {
+/*
+====================================
+CREATE PROPERTY (ADMIN)
+POST /api/properties
+====================================
+*/
+router.post("/", adminAuth, async (req, res) => {
   try {
     const newProperty = new Property(req.body);
     await newProperty.save();
 
-    res.json({
+    res.status(201).json({
       message: "Property created successfully",
       property: newProperty,
     });
@@ -22,10 +24,12 @@ router.post("/create", adminAuth, async (req, res) => {
   }
 });
 
-
-// ---------------------------------------------
-// GET All Properties (PUBLIC)
-// ---------------------------------------------
+/*
+====================================
+GET ALL PROPERTIES (PUBLIC)
+GET /api/properties
+====================================
+*/
 router.get("/", async (req, res) => {
   try {
     const properties = await Property.find().sort({ createdAt: -1 });
@@ -36,10 +40,12 @@ router.get("/", async (req, res) => {
   }
 });
 
-
-// ---------------------------------------------
-// GET Single Property by ID (PUBLIC)
-// ---------------------------------------------
+/*
+====================================
+GET SINGLE PROPERTY (PUBLIC)
+GET /api/properties/:id
+====================================
+*/
 router.get("/:id", async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
@@ -55,15 +61,17 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-
-// ---------------------------------------------
-// UPDATE Property (ADMIN)
-// ---------------------------------------------
-router.put("/update/:id", adminAuth, async (req, res) => {
+/*
+====================================
+UPDATE PROPERTY (ADMIN)
+PUT /api/properties/:id
+====================================
+*/
+router.put("/:id", adminAuth, async (req, res) => {
   try {
     const updated = await Property.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      { $set: req.body },
       { new: true }
     );
 
@@ -81,11 +89,13 @@ router.put("/update/:id", adminAuth, async (req, res) => {
   }
 });
 
-
-// ---------------------------------------------
-// DELETE Property (ADMIN)
-// ---------------------------------------------
-router.delete("/delete/:id", adminAuth, async (req, res) => {
+/*
+====================================
+DELETE PROPERTY (ADMIN)
+DELETE /api/properties/:id
+====================================
+*/
+router.delete("/:id", adminAuth, async (req, res) => {
   try {
     const deleted = await Property.findByIdAndDelete(req.params.id);
 
@@ -95,13 +105,11 @@ router.delete("/delete/:id", adminAuth, async (req, res) => {
 
     res.json({
       message: "Property deleted successfully",
-      property: deleted,
     });
   } catch (err) {
     console.error("Error deleting property:", err);
     res.status(500).json({ message: "Error deleting property" });
   }
 });
-
 
 module.exports = router;
