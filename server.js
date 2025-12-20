@@ -11,15 +11,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ Routes (case-correct, Linux-safe)
+// ✅ ROUTES (exact paths – Linux safe)
 const authRoutes = require("./backend/routes/authRoutes");
 const propertyRoutes = require("./backend/routes/propertyRoutes");
 
-// Use routes
+// API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/properties", propertyRoutes);
 
-// Serve frontend
+// Serve frontend static files
 app.use(express.static(path.join(__dirname, "frontend")));
 
 app.get("/", (req, res) => {
@@ -30,9 +30,9 @@ app.get("/", (req, res) => {
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error("MongoDB error:", err));
+  .catch(err => console.error("MongoDB error:", err));
 
-// Start server (REQUIRED for Render)
+// ✅ REQUIRED FOR RENDER
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
