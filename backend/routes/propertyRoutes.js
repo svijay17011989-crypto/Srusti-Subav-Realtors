@@ -1,13 +1,28 @@
 const express = require("express");
 const router = express.Router();
+const streamifier = require("streamifier");
 
 const Property = require("../models/Property");
 const adminAuth = require("../middleware/adminAuth");
 const upload = require("../middleware/uploads");
-
 const cloudinary = require("../config/cloudinary");
 
 console.log("✅ propertyRoutes loaded");
+
+// Helper: upload buffer to Cloudinary
+const uploadToCloudinary = (buffer) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: "srusti-properties" },
+      (error, result) => {
+        if (result) resolve(result.secure_url);
+        else reject(error);
+      }
+    );
+
+    streamifier.createReadStream(buffer).pipe(stream);
+  });
+};
 
 // ===============================
 // CREATE property (ADMIN ONLY)
@@ -15,7 +30,7 @@ console.log("✅ propertyRoutes loaded");
 router.post(
   "/create",
   adminAuth,
-  upload.array("images", 5), // 🔴 THIS WAS MISSING EARLIER
+  upload.array("images", 5),
   async (req, res) => {
     try {
       const imageUrls = [];
@@ -23,10 +38,8 @@ router.post(
       // Upload images to Cloudinary
       if (req.files && req.files.length > 0) {
         for (const file of req.files) {
-          const result = await cloudinary.uploader.upload(file.path, {
-            folder: "srusti-properties",
-          });
-          imageUrls.push(result.secure_url);
+          const imageUrl = await uploadToCloudinary(file.buffer);
+          imageUrls.push(imageUrl);
         }
       }
 
