@@ -1,0 +1,35 @@
+/* ---------- WHY CHOOSE US FIX ---------- */
+.section-why-choose-overlay {
+  background: rgba(0, 0, 0, 0.35); /* medium dark */
+  padding: 80px 20px;
+}
+
+.section-why-choose-overlay h2,
+.section-why-choose-overlay h3,
+.section-why-choose-overlay p {
+  color: #ffffff !important;
+}
+
+/* ---------- WHAT OUR CLIENTS SAY FIX ---------- */
+.section-testimonials-overlay {
+  background: rgba(0, 0, 0, 0.4); /* slightly darker */
+  padding: 80px 20px;
+}
+
+.section-testimonials-overlay h2,
+.section-testimonials-overlay p,
+.section-testimonials-overlay span {
+  color: #ffffff !important;
+}
+
+.section-testimonials-overlay .client-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #facc15; /* gold highlight */
+}
+
+.section-testimonials-overlay .client-role {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+

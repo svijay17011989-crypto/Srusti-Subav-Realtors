@@ -1,9 +1,11 @@
 const express = require("express");
+const { adminLogin } = require("../controllers/authController");
+
 const router = express.Router();
 
-// example login route
-router.post("/login", async (req, res) => {
-  res.json({ message: "Auth route working" });
-});
+/**
+ * ADMIN LOGIN (DATABASE BASED)
+ */
+router.post("/admin/login", adminLogin);
 
 module.exports = router;

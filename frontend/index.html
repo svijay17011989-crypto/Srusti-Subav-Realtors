@@ -1,226 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Srusti Subav Realtors</title>
+  <head>
+    <!-- Basic -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Srusti Subav Realtors | Luxury Real Estate in Coimbatore</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f7fdf7;
-    }
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/images/favicon.png" />
+    <link rel="apple-touch-icon" href="/images/favicon.png" />
 
-    header {
-      background: #138f3e;
-      color: white;
-      padding: 15px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    <!-- Theme Color (Luxury Black) -->
+    <meta name="theme-color" content="#000000" />
 
-    header h1 {
-      margin: 0;
-      font-size: 22px;
-    }
+    <!-- SEO -->
+    <meta
+      name="description"
+      content="Srusti Subav Realtors offers premium residential and commercial properties in Coimbatore. Trusted luxury real estate solutions."
+    />
+    <meta
+      name="keywords"
+      content="Luxury Real Estate, Coimbatore Properties, Villas, Land for Sale, Commercial Property"
+    />
+    <meta name="author" content="Srusti Subav Realtors" />
 
-    nav a {
-      color: white;
-      margin-left: 20px;
-      text-decoration: none;
-      font-weight: bold;
-    }
+    <!-- Open Graph (WhatsApp, LinkedIn, Facebook) -->
+    <meta property="og:title" content="Srusti Subav Realtors" />
+    <meta
+      property="og:description"
+      content="Luxury residential and commercial real estate solutions in Coimbatore."
+    />
+    <meta property="og:image" content="/images/og-realestate.jpg" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Srusti Subav Realtors" />
 
-    .hero {
-      height: 300px;
-      background: url("https://images.unsplash.com/photo-1568605114967-8130f3a36994")
-        center/cover no-repeat;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      text-shadow: 1px 1px 3px black;
-    }
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Srusti Subav Realtors" />
+    <meta
+      name="twitter:description"
+      content="Premium real estate solutions with luxury standards."
+    />
+    <meta name="twitter:image" content="/images/og-realestate.jpg" />
 
-    .hero h2 {
-      font-size: 36px;
-      margin-bottom: 10px;
-    }
+    <!-- Google Fonts (Luxury Feel) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
 
-    .hero p {
-      font-size: 18px;
-    }
-
-    section {
-      padding: 40px;
-    }
-
-    h2 {
-      margin-bottom: 20px;
-    }
-
-    .property-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-    }
-
-    .card img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-    }
-
-    .card-body {
-      padding: 15px;
-    }
-
-    .card-body h3 {
-      margin: 0 0 10px;
-      font-size: 18px;
-    }
-
-    .price {
-      color: #138f3e;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-
-    .status {
-      display: inline-block;
-      margin-top: 8px;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 12px;
-      background: #e0f5e8;
-      color: #138f3e;
-    }
-
-    footer {
-      background: #138f3e;
-      color: white;
-      text-align: center;
-      padding: 15px;
-    }
-
-    /* Floating buttons */
-    .whatsapp-float {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #25d366;
-      color: white;
-      font-size: 24px;
-      padding: 12px 15px;
-      border-radius: 50%;
-      text-decoration: none;
-    }
-
-    .back-top {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      background: #138f3e;
-      color: white;
-      padding: 10px;
-      border-radius: 50%;
-      cursor: pointer;
-    }
-  </style>
-</head>
-
-<body>
-
-<header>
-  <h1>Srusti Subav Realtors</h1>
-  <nav>
-    <a href="#home">Home</a>
-    <a href="#properties">Properties</a>
-    <a href="#contact">Contact</a>
-  </nav>
-</header>
-
-<div class="hero" id="home">
-  <h2>Premium DTCP Approved Plots</h2>
-  <p>Best investment opportunities in Coimbatore</p>
-</div>
-
-<section id="properties">
-  <h2>Available Properties</h2>
-
-  <!-- PROPERTY GRID -->
-  <div id="propertyGrid" class="property-grid"></div>
-</section>
-
-<section id="contact">
-  <h2>Contact Us</h2>
-  <p><strong>Phone:</strong> +91 8466069839</p>
-</section>
-
-<footer>
-  © 2025 Srusti Subav Realtors
-</footer>
-
-<!-- LOAD PROPERTIES SCRIPT -->
-<script>
-  async function loadProperties() {
-    try {
-      const res = await fetch(
-        "https://srusti-backend.onrender.com/api/properties"
-      );
-      const data = await res.json();
-
-      const grid = document.getElementById("propertyGrid");
-      grid.innerHTML = "";
-
-      data.forEach((p) => {
-        const img =
-          p.images && p.images.length
-            ? p.images[0]
-            : "assets/no-image.jpg";
-
-        grid.innerHTML += `
-          <div class="card" onclick="openProperty('${p._id}')">
-            <img src="${img}" />
-            <div class="card-body">
-              <h3>${p.title}</h3>
-              <div class="price">₹ ${p.price}</div>
-              <span class="status">${p.status}</span>
-            </div>
-          </div>
-        `;
-      });
-    } catch (err) {
-      console.error("Error loading properties:", err);
-    }
-  }
-
-  function openProperty(id) {
-    window.location.href = "property.html?id=" + id;
-  }
-
-  loadProperties();
-</script>
-
-<!-- FLOATING BUTTONS -->
-<a href="https://wa.me/918466069839" class="whatsapp-float">💬</a>
-<div class="back-top" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });">↑</div>
-
-</body>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>

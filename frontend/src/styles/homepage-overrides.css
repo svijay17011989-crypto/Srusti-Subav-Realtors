@@ -1,0 +1,71 @@
+/* =====================================================
+   WHY CHOOSE US – DARK BACKGROUND FIX
+   ===================================================== */
+
+section#why-choose-us,
+.why-choose-us,
+.section-why-choose {
+  background-color: #1f2933 !important;
+  padding: 80px 20px;
+}
+
+section#why-choose-us h2,
+section#why-choose-us h3,
+section#why-choose-us p,
+.why-choose-us h2,
+.why-choose-us h3,
+.why-choose-us p {
+  color: #ffffff !important;
+}
+
+/* =====================================================
+   TESTIMONIALS – BACKGROUND + TEXT VISIBILITY FIX
+   ===================================================== */
+
+section#testimonials,
+.testimonials-section {
+  background-color: #111827 !important;
+  padding: 80px 20px;
+}
+
+/* Section Heading */
+section#testimonials h2,
+.testimonials-section h2 {
+  color: #ffffff !important;
+}
+
+/* Testimonial Card (keep clean white) */
+.testimonial-card {
+  background: #ffffff !important;
+}
+
+/* Testimonial Text */
+.testimonial-card p {
+  color: #111827 !important;
+  font-size: 1rem;
+}
+
+/* Client Name */
+.testimonial-card h4,
+.testimonial-card .client-name {
+  color: #111827 !important;
+  font-weight: 600;
+}
+
+/* Client Role */
+.testimonial-card span,
+.testimonial-card .client-role {
+  color: #4b5563 !important;
+}
+
+/* =====================================================
+   OPTIONAL – DOT INDICATOR VISIBILITY
+   ===================================================== */
+
+.testimonial-dots span {
+  background-color: #9ca3af !important;
+}
+
+.testimonial-dots span.active {
+  background-color: #facc15 !important;
+}

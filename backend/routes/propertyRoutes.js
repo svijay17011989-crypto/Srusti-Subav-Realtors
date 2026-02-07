@@ -1,92 +1,78 @@
 const express = require("express");
 const router = express.Router();
-const streamifier = require("streamifier");
 
 const Property = require("../models/Property");
-const adminAuth = require("../middleware/adminAuth");
-const upload = require("../middleware/uploads");
-const cloudinary = require("../config/cloudinary");
 
-console.log("✅ propertyRoutes loaded");
+/* ======================================================
+   PUBLIC ROUTES
+====================================================== */
 
-// Helper: upload buffer to Cloudinary
-const uploadToCloudinary = (buffer) => {
-  return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      { folder: "srusti-properties" },
-      (error, result) => {
-        if (result) resolve(result.secure_url);
-        else reject(error);
-      }
-    );
+// FEATURED (MUST BE FIRST)
+router.get("/featured", async (req, res) => {
+  try {
+    const properties = await Property.find({
+      status: "published",
+      featured: true
+    })
+      .sort({ createdAt: -1 })
+      .limit(6);
 
-    streamifier.createReadStream(buffer).pipe(stream);
-  });
-};
-
-// ===============================
-// CREATE property (ADMIN ONLY)
-// ===============================
-router.post(
-  "/create",
-  adminAuth,
-  upload.array("images", 5),
-  async (req, res) => {
-    try {
-      const imageUrls = [];
-
-      // Upload images to Cloudinary
-      if (req.files && req.files.length > 0) {
-        for (const file of req.files) {
-          const imageUrl = await uploadToCloudinary(file.buffer);
-          imageUrls.push(imageUrl);
-        }
-      }
-
-      const property = new Property({
-        title: req.body.title,
-        price: req.body.price,
-        location: req.body.location,
-        type: req.body.type,
-        description: req.body.description,
-        images: imageUrls,
-      });
-
-      await property.save();
-      res.json(property);
-    } catch (err) {
-      console.error("❌ Create property error:", err);
-      res.status(500).json({ message: err.message });
-    }
+    res.json(properties);
+  } catch (err) {
+    console.error("FEATURED ERROR:", err);
+    res.status(500).json({ message: "Failed to fetch featured properties" });
   }
-);
-
-// ===============================
-// MARK PROPERTY AS SOLD
-// ===============================
-router.put("/:id/sold", adminAuth, async (req, res) => {
-  const property = await Property.findById(req.params.id);
-  if (!property) return res.status(404).json({ message: "Not found" });
-
-  property.status = "sold";
-  await property.save();
-  res.json(property);
 });
 
-// ===============================
-// DELETE PROPERTY
-// ===============================
-router.delete("/:id", adminAuth, async (req, res) => {
-  await Property.findByIdAndDelete(req.params.id);
-  res.json({ message: "Property deleted" });
+
+// FEATURED LIST (alias – kept as-is, safe)
+router.get("/featured/list", async (req, res) => {
+  try {
+    const properties = await Property.find({
+      status: "published",
+      $or: [
+        { isFeatured: true },
+        { featured: true }
+      ]
+    })
+      .sort({ createdAt: -1 })
+      .limit(6);
+
+    res.json(properties);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch featured properties" });
+  }
 });
 
-// ===============================
-// GET ALL PROPERTIES (PUBLIC)
-// ===============================
+// ALL PUBLISHED
 router.get("/", async (req, res) => {
-  const properties = await Property.find().sort({ createdAt: -1 });
-  res.json(properties);
+  try {
+    const properties = await Property.find({ status: "published" })
+      .sort({ createdAt: -1 });
+
+    res.json(properties);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch properties" });
+  }
+});
+
+// SINGLE (MUST BE LAST)
+router.get("/:id", async (req, res) => {
+  try {
+    const property = await Property.findOne({
+      _id: req.params.id,
+      status: "published",
+    });
+
+    if (!property) {
+      return res.status(404).json({ message: "Property not found" });
+    }
+
+    res.json(property);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch property" });
+  }
 });
 
 module.exports = router;

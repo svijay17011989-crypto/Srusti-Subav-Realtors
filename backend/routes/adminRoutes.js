@@ -1,45 +1,19 @@
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcryptjs");
+
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+
+const Property = require("../models/Property");
+const Testimonial = require("../models/Testimonial");
+const HeroSlide = require("../models/HeroSlide");
 const Admin = require("../models/Admin");
 
-// ===== TEST ROUTE =====
-router.get("/test", (req, res) => {
-  res.send("ADMIN ROUTES WORKING");
-});
+const adminAuth = require("../middleware/adminAuth");
 
-// ===== REGISTER ADMIN =====
-router.post("/register", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ message: "Email and password required" });
-    }
-
-    const existingAdmin = await Admin.findOne({ email });
-    if (existingAdmin) {
-      return res.status(400).json({ message: "Admin already exists" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const admin = new Admin({
-      email,
-      password: hashedPassword,
-    });
-
-    await admin.save();
-
-    res.json({ message: "Admin registered successfully" });
-  } catch (err) {
-    console.error("Admin register error:", err);
-    res.status(500).json({ message: err.message });
-  }
-});
-
-// ===== LOGIN ADMIN =====
+/* ======================================================
+   ✅ ADMIN LOGIN (EXISTING)
+====================================================== */
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -55,14 +29,102 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: admin._id },
-      process.env.JWT_SECRET || "secretkey",
-      { expiresIn: "1d" }
+      { id: admin._id, email: admin.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
     );
 
     res.json({ token });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("ADMIN LOGIN ERROR:", err);
+    res.status(500).json({ message: "Login failed" });
+  }
+});
+
+/* ======================================================
+   ADMIN PROPERTIES (EXISTING)
+====================================================== */
+
+// GET ALL PROPERTIES (ADMIN)
+router.get("/properties", adminAuth, async (req, res) => {
+  try {
+    const properties = await Property.find().sort({ createdAt: -1 });
+    res.json(properties);
+  } catch (err) {
+    console.error("ADMIN PROPERTIES ERROR:", err);
+    res.status(500).json({ message: "Failed to fetch properties" });
+  }
+});
+
+/* ======================================================
+   ✅ ADD: GET SINGLE PROPERTY (ADMIN)  ← FIXES EDIT
+====================================================== */
+router.get("/properties/:id", adminAuth, async (req, res) => {
+  try {
+    const property = await Property.findById(req.params.id);
+    if (!property) {
+      return res.status(404).json({ message: "Property not found" });
+    }
+    res.json(property);
+  } catch (err) {
+    console.error("ADMIN GET PROPERTY ERROR:", err);
+    res.status(500).json({ message: "Failed to fetch property" });
+  }
+});
+
+/* ======================================================
+   ✅ ADD: UPDATE PROPERTY (ADMIN)
+====================================================== */
+router.put("/properties/:id", adminAuth, async (req, res) => {
+  try {
+    const updated = await Property.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    res.json(updated);
+  } catch (err) {
+    console.error("ADMIN UPDATE PROPERTY ERROR:", err);
+    res.status(500).json({ message: "Failed to update property" });
+  }
+});
+
+/* ======================================================
+   ✅ ADD: DELETE PROPERTY (ADMIN)
+====================================================== */
+router.delete("/properties/:id", adminAuth, async (req, res) => {
+  try {
+    await Property.findByIdAndDelete(req.params.id);
+    res.json({ message: "Property deleted" });
+  } catch (err) {
+    console.error("ADMIN DELETE PROPERTY ERROR:", err);
+    res.status(500).json({ message: "Failed to delete property" });
+  }
+});
+
+/* ======================================================
+   ADMIN DASHBOARD AGGREGATION (EXISTING)
+====================================================== */
+router.get("/dashboard-stats", adminAuth, async (req, res) => {
+  try {
+    const properties = await Property.find();
+    const testimonials = await Testimonial.find();
+    const heroSlides = await HeroSlide.find();
+
+    res.json({
+      total: properties.length,
+      available: properties.filter(p => p.status === "available").length,
+      sold: properties.filter(p => p.status === "sold").length,
+      draft: properties.filter(
+        p => p.status === "draft" || p.active === false
+      ).length,
+      featured: properties.filter(p => p.featured === true).length,
+      testimonials: testimonials.length,
+      heroSlides: heroSlides.length
+    });
+  } catch (err) {
+    console.error("DASHBOARD STATS ERROR:", err);
+    res.status(500).json({ message: "Failed to load dashboard stats" });
   }
 });
 

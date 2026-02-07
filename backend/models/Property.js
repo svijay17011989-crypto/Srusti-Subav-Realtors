@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const propertySchema = new mongoose.Schema(
+const PropertySchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -10,39 +10,73 @@ const propertySchema = new mongoose.Schema(
 
     description: {
       type: String,
-      trim: true,
+      default: "",
+    },
+
+    type: {
+      type: String,
+      default: "Residential",
     },
 
     price: {
-      type: String,
+      type: Number,
       required: true,
+    },
+
+    priceUnit: {
+      type: String,
+      default: "perCent", // existing behaviour preserved
+    },
+
+    /* 🔹 NEW — LOCATION */
+    location: {
+      type: String,
+      default: "", // eg: Kalapatti, Coimbatore
+    },
+
+    /* 🔹 NEW — AREA */
+    areaValue: {
+      type: Number,
+      default: null, // eg: 2.5
+    },
+
+    areaUnit: {
+      type: String,
+      default: "", // acres | cents | sqft
     },
 
     measurements: {
       type: String,
-      trim: true,
+      default: "",
     },
 
     landFacing: {
       type: String,
-      trim: true,
+      default: "",
     },
 
-    // ✅ MULTIPLE IMAGES SUPPORT
-    images: {
-      type: [String], // stores image URLs like /uploads/filename.jpg
-      default: [],
+    dtcpApproved: {
+      type: String,
+      default: "No",
+    },
+
+    featured: {
+      type: Boolean,
+      default: false,
     },
 
     status: {
       type: String,
-      enum: ["available", "sold"],
       default: "available",
     },
+
+    images: [
+      {
+        type: String,
+      },
+    ],
   },
-  {
-    timestamps: true, // adds createdAt & updatedAt automatically
-  }
+  { timestamps: true }
 );
 
-module.exports = mongoose.model("Property", propertySchema);
+module.exports = mongoose.model("Property", PropertySchema);

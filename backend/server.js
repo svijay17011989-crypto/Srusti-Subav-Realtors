@@ -1,46 +1,58 @@
-require("dotenv").config();
-
-const path = require("path");
 const express = require("express");
-const cors = require("cors");
 const mongoose = require("mongoose");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const path = require("path");
+
+dotenv.config();
 
 const app = express();
 
-// Middlewares
-app.use(cors());
+/* =========================
+   MIDDLEWARE
+========================= */
 app.use(express.json());
-// Serve uploaded images
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+
+/* =========================
+   STATIC FILES (IMAGES)
+========================= */
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+/* =========================
+   ROUTES
+========================= */
+app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/properties", require("./routes/propertyRoutes"));
+app.use("/api/admin", require("./routes/adminRoutes"));
+app.use("/api/hero", require("./routes/heroRoutes"));
+app.use("/api/testimonials", require("./routes/testimonialRoutes"));
 
-// ===== MongoDB Connection =====
-console.log("MONGO_URI =", process.env.MONGO_URI);
-
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) =>
-    console.error("❌ MongoDB connection error:", err.message)
-  );
-
-// ===== ROUTES =====
-const propertyRoutes = require("./routes/propertyRoutes");
-const adminRoutes = require("./routes/adminRoutes");
-
-app.use("/api/properties", propertyRoutes);
-app.use("/api/admin", adminRoutes);
-
-console.log("✅ Admin routes mounted at /api/admin");
-
-// ===== Test Route =====
+/* =========================
+   TEST ROUTE (OPTIONAL)
+========================= */
 app.get("/", (req, res) => {
-  res.send("🚀 Server is running");
+  res.send("API is running...");
 });
 
-// ===== Server Start =====
-const PORT = process.env.PORT || 5000;
+/* =========================
+   DATABASE
+========================= */
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB error:", err));
 
+/* =========================
+   SERVER
+========================= */
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
