@@ -1,15 +1,25 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
+import axiosAdmin from "../../api/axiosAdmin";
 
 const AdminHero = () => {
   const [heroes, setHeroes] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  /* FETCH HERO SLIDES */
+  /* ================= FETCH HERO SLIDES ================= */
   const fetchHeroes = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/hero");
-      setHeroes(res.data || []);
+      let res;
+
+      try {
+        // ✅ Try ADMIN API first
+        res = await axiosAdmin.get("/hero");
+      } catch {
+        // ✅ Fallback → PUBLIC API (env-based)
+        res = await api.get("/hero");
+      }
+
+      setHeroes(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Failed to fetch hero slides", err);
     } finally {
@@ -21,14 +31,11 @@ const AdminHero = () => {
     fetchHeroes();
   }, []);
 
-  /* UPDATE HERO (ORDER / ACTIVE) */
+  /* ================= UPDATE HERO (ORDER / ACTIVE) ================= */
   const updateHero = async (id, data) => {
     try {
-      await axios.put(
-        `http://localhost:5000/api/hero/${id}`,
-        data,
-        { withCredentials: true }
-      );
+      // ✅ Admin-only update
+      await axiosAdmin.put(`/hero/${id}`, data);
       fetchHeroes();
     } catch (err) {
       console.error("Failed to update hero", err);
@@ -39,7 +46,9 @@ const AdminHero = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-6">Hero Slider Management</h1>
+      <h1 className="text-2xl font-semibold mb-6">
+        Hero Slider Management
+      </h1>
 
       {heroes.length === 0 && (
         <p className="text-gray-500">No hero slides found.</p>
@@ -48,7 +57,7 @@ const AdminHero = () => {
       <div className="grid gap-6">
         {heroes
           .sort((a, b) => a.order - b.order)
-          .map((hero, index) => (
+          .map((hero) => (
             <div
               key={hero._id}
               className="flex gap-6 items-center border rounded-lg p-4 shadow-sm bg-white"
@@ -70,7 +79,9 @@ const AdminHero = () => {
 
               {/* ORDER */}
               <div className="flex flex-col items-center">
-                <label className="text-xs text-gray-500 mb-1">Order</label>
+                <label className="text-xs text-gray-500 mb-1">
+                  Order
+                </label>
                 <input
                   type="number"
                   value={hero.order}
@@ -85,7 +96,9 @@ const AdminHero = () => {
 
               {/* ACTIVE TOGGLE */}
               <div className="flex flex-col items-center">
-                <label className="text-xs text-gray-500 mb-1">Active</label>
+                <label className="text-xs text-gray-500 mb-1">
+                  Active
+                </label>
                 <input
                   type="checkbox"
                   checked={hero.active}

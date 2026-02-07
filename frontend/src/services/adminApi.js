@@ -1,12 +1,10 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: import.meta.env.VITE_API_BASE_URL,
 });
 
-/* =========================================
-   ATTACH ADMIN TOKEN AUTOMATICALLY
-========================================= */
+/* Attach admin token */
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem("adminToken");
   if (token) {
@@ -15,20 +13,12 @@ API.interceptors.request.use((req) => {
   return req;
 });
 
-/* =========================================
-   ADMIN LOGIN (✅ FIXED ENDPOINT)
-========================================= */
+/* Admin login */
 export const adminLogin = async (email, password) => {
-  const res = await API.post("/auth/admin/login", {
-    email,
-    password,
-  });
-
-  /* Save token */
+  const res = await API.post("/auth/admin/login", { email, password });
   if (res.data?.token) {
     localStorage.setItem("adminToken", res.data.token);
   }
-
   return res.data;
 };
 

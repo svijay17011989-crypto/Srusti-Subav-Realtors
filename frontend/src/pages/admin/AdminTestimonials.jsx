@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
+import axiosAdmin from "../../api/axiosAdmin";
 
 const AdminTestimonials = () => {
   const [testimonials, setTestimonials] = useState([]);
@@ -11,11 +12,16 @@ const AdminTestimonials = () => {
   });
   const [editingId, setEditingId] = useState(null);
 
-  /* FETCH TESTIMONIALS */
+  /* ================= FETCH ================= */
   const fetchTestimonials = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/testimonials");
-      setTestimonials(res.data || []);
+      let res;
+      try {
+        res = await axiosAdmin.get("/testimonials");
+      } catch {
+        res = await api.get("/testimonials");
+      }
+      setTestimonials(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Failed to fetch testimonials", err);
     }
@@ -25,7 +31,7 @@ const AdminTestimonials = () => {
     fetchTestimonials();
   }, []);
 
-  /* HANDLE INPUT */
+  /* ================= FORM ================= */
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm({
@@ -34,23 +40,14 @@ const AdminTestimonials = () => {
     });
   };
 
-  /* SUBMIT */
+  /* ================= SUBMIT ================= */
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       if (editingId) {
-        await axios.put(
-          `http://localhost:5000/api/testimonials/${editingId}`,
-          form,
-          { withCredentials: true }
-        );
+        await axiosAdmin.put(`/testimonials/${editingId}`, form);
       } else {
-        await axios.post(
-          "http://localhost:5000/api/testimonials",
-          form,
-          { withCredentials: true }
-        );
+        await axiosAdmin.post("/testimonials", form);
       }
 
       setForm({ name: "", role: "", message: "", active: true });
@@ -61,7 +58,7 @@ const AdminTestimonials = () => {
     }
   };
 
-  /* EDIT */
+  /* ================= EDIT ================= */
   const handleEdit = (t) => {
     setForm({
       name: t.name,
@@ -72,14 +69,11 @@ const AdminTestimonials = () => {
     setEditingId(t._id);
   };
 
-  /* DELETE */
+  /* ================= DELETE ================= */
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this testimonial?")) return;
     try {
-      await axios.delete(
-        `http://localhost:5000/api/testimonials/${id}`,
-        { withCredentials: true }
-      );
+      await axiosAdmin.delete(`/testimonials/${id}`);
       fetchTestimonials();
     } catch (err) {
       console.error("Delete failed", err);
@@ -97,48 +91,42 @@ const AdminTestimonials = () => {
         onSubmit={handleSubmit}
         className="bg-white p-6 rounded-lg shadow mb-10 max-w-2xl"
       >
-        <div className="mb-4">
-          <label className="block text-sm mb-1">Customer Name</label>
-          <input
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            required
-            className="w-full border rounded px-3 py-2"
-          />
-        </div>
+        <input
+          name="name"
+          value={form.name}
+          onChange={handleChange}
+          required
+          placeholder="Customer Name"
+          className="w-full border rounded px-3 py-2 mb-4"
+        />
 
-        <div className="mb-4">
-          <label className="block text-sm mb-1">Role / Location</label>
-          <input
-            name="role"
-            value={form.role}
-            onChange={handleChange}
-            className="w-full border rounded px-3 py-2"
-          />
-        </div>
+        <input
+          name="role"
+          value={form.role}
+          onChange={handleChange}
+          placeholder="Role / Location"
+          className="w-full border rounded px-3 py-2 mb-4"
+        />
 
-        <div className="mb-4">
-          <label className="block text-sm mb-1">Message</label>
-          <textarea
-            name="message"
-            value={form.message}
-            onChange={handleChange}
-            required
-            rows={4}
-            className="w-full border rounded px-3 py-2"
-          />
-        </div>
+        <textarea
+          name="message"
+          value={form.message}
+          onChange={handleChange}
+          required
+          rows={4}
+          placeholder="Message"
+          className="w-full border rounded px-3 py-2 mb-4"
+        />
 
-        <div className="mb-4 flex items-center gap-2">
+        <label className="flex items-center gap-2 mb-4">
           <input
             type="checkbox"
             name="active"
             checked={form.active}
             onChange={handleChange}
           />
-          <label className="text-sm">Active</label>
-        </div>
+          Active
+        </label>
 
         <button className="bg-black text-white px-6 py-2 rounded">
           {editingId ? "Update Testimonial" : "Add Testimonial"}
@@ -152,30 +140,23 @@ const AdminTestimonials = () => {
             key={t._id}
             className="border rounded-lg p-4 bg-white shadow-sm"
           >
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="font-semibold">{t.name}</h3>
-                <p className="text-sm text-gray-500">{t.role}</p>
-                <p className="mt-2 text-gray-700">{t.message}</p>
-                {!t.active && (
-                  <span className="text-xs text-red-500">Inactive</span>
-                )}
-              </div>
+            <h3 className="font-semibold">{t.name}</h3>
+            <p className="text-sm text-gray-500">{t.role}</p>
+            <p className="mt-2">{t.message}</p>
 
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleEdit(t)}
-                  className="text-sm px-3 py-1 border rounded"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(t._id)}
-                  className="text-sm px-3 py-1 border rounded text-red-600"
-                >
-                  Delete
-                </button>
-              </div>
+            <div className="flex gap-2 mt-3">
+              <button
+                onClick={() => handleEdit(t)}
+                className="px-3 py-1 border rounded"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDelete(t._id)}
+                className="px-3 py-1 border rounded text-red-600"
+              >
+                Delete
+              </button>
             </div>
           </div>
         ))}

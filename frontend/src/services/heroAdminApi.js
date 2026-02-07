@@ -1,7 +1,7 @@
-import axios from "axios";
+import axiosAdmin from "../api/axiosAdmin";
 
-const API = "http://localhost:5000/api/admin/hero";
-
-export const getHeroes = () => axios.get(API);
-export const updateHero = (id, data) => axios.put(`${API}/${id}`, data);
-export const deleteHero = (id) => axios.delete(`${API}/${id}`);
+export const getHeroes = () => axiosAdmin.get("/hero");
+export const updateHero = (id, data) =>
+  axiosAdmin.put(`/hero/${id}`, data);
+export const deleteHero = (id) =>
+  axiosAdmin.delete(`/hero/${id}`);
