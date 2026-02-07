@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axiosAdmin from "../../api/axiosAdmin";
-import axios from "axios"; // 👈 NEW (public axios)
+import api from "../../api/axios"; // ✅ PUBLIC API (env-based)
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({
@@ -20,12 +20,12 @@ const AdminDashboard = () => {
         let properties = [];
 
         try {
-          // Try admin API (if exists)
+          // ✅ Try ADMIN API first
           const res = await axiosAdmin.get("/properties");
           properties = Array.isArray(res.data) ? res.data : [];
         } catch {
-          // ✅ FALLBACK → PUBLIC API (ABSOLUTE PATH)
-          const res = await axios.get("http://localhost:5000/api/properties");
+          // ✅ Fallback → PUBLIC API (ENV BASED)
+          const res = await api.get("/properties");
           properties = Array.isArray(res.data) ? res.data : [];
         }
 
@@ -38,14 +38,14 @@ const AdminDashboard = () => {
         /* ================= TESTIMONIALS ================= */
         let testimonialsCount = 0;
         try {
-          const res = await axios.get("http://localhost:5000/api/testimonials");
+          const res = await api.get("/testimonials");
           testimonialsCount = Array.isArray(res.data) ? res.data.length : 0;
         } catch {}
 
         /* ================= HERO SLIDES ================= */
         let heroSlidesCount = 0;
         try {
-          const res = await axios.get("http://localhost:5000/api/hero");
+          const res = await api.get("/hero");
           heroSlidesCount = Array.isArray(res.data) ? res.data.length : 0;
         } catch {}
 
@@ -68,7 +68,6 @@ const AdminDashboard = () => {
 
   return (
     <div className="space-y-10">
-
       <div>
         <h1 className="text-2xl font-playfair mb-1">
           Admin Dashboard
@@ -79,7 +78,6 @@ const AdminDashboard = () => {
       </div>
 
       <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-6">
-
         <div className="admin-card">
           <p className="text-sm text-[var(--text-muted)]">Total</p>
           <h2 className="text-3xl font-semibold">{stats.total}</h2>
@@ -119,7 +117,6 @@ const AdminDashboard = () => {
             {stats.heroSlides}
           </h2>
         </div>
-
       </div>
     </div>
   );
