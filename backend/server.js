@@ -13,14 +13,33 @@ const app = express();
 ========================= */
 app.use(express.json());
 
+/**
+ * ✅ CORS CONFIG (FIXED)
+ * Allows:
+ * - Local development
+ * - All Vercel preview & production URLs
+ */
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://your-vercel-app.vercel.app",
-      "https://yourdomain.com",
-      "https://www.yourdomain.com",
-    ],
+    origin: (origin, callback) => {
+      // Allow server-to-server or Postman requests
+      if (!origin) return callback(null, true);
+
+      // Allow localhost
+      if (origin.startsWith("http://localhost")) {
+        return callback(null, true);
+      }
+
+      // Allow all Vercel deployments
+      if (origin.endsWith(".vercel.app")) {
+        return callback(null, true);
+      }
+
+      return callback(
+        new Error("CORS not allowed for this origin: " + origin),
+        false
+      );
+    },
     credentials: true,
   })
 );
@@ -40,7 +59,7 @@ app.use("/api/hero", require("./routes/heroRoutes"));
 app.use("/api/testimonials", require("./routes/testimonialRoutes"));
 
 /* =========================
-   TEST ROUTE (OPTIONAL)
+   TEST ROUTE
 ========================= */
 app.get("/", (req, res) => {
   res.send("API is running...");
