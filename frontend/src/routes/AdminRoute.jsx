@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 
 /* ✅ ADMIN LAYOUT */
-import AdminLayout from "../admin/components/AdminLayout";
+import AdminLayout from "../admin/Components/AdminLayout";
 
 /* ✅ ADMIN PAGES */
 import Dashboard from "../admin/pages/Dashboard";
