@@ -14,10 +14,11 @@ const app = express();
 app.use(express.json());
 
 /**
- * ✅ CORS CONFIG (FIXED)
+ * ✅ CORS CONFIG (UPDATED – SAFE)
  * Allows:
  * - Local development
  * - All Vercel preview & production URLs
+ * - Custom domain (srustisubavrealtors.com)
  */
 app.use(
   cors({
@@ -32,6 +33,14 @@ app.use(
 
       // Allow all Vercel deployments
       if (origin.endsWith(".vercel.app")) {
+        return callback(null, true);
+      }
+
+      // ✅ Allow custom production domains
+      if (
+        origin === "https://www.srustisubavrealtors.com" ||
+        origin === "https://srustisubavrealtors.com"
+      ) {
         return callback(null, true);
       }
 
