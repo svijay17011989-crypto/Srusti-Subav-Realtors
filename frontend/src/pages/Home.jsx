@@ -6,7 +6,7 @@ import PropertyCard from "../components/PropertyCard";
 import Testimonials from "../components/Testimonials";
 
 /* ======================================================
-   HERO SLIDES (CONTENT UPDATED — LOGIC UNCHANGED)
+   HERO SLIDES
 ====================================================== */
 const heroSlides = Array.from({ length: 10 }).map((_, i) => ({
   src: `/images/hero${i + 1}.jpg`,
@@ -75,7 +75,7 @@ export default function Home() {
 
         <meta
           name="keywords"
-          content="Srusti Subav Realtors, real estate Coimbatore, DTCP plots Tamil Nadu, land investment Coimbatore, residential plots Coimbatore, agricultural land investment Kerala"
+          content="Srusti Subav Realtors, real estate Coimbatore, DTCP plots Tamil Nadu, land investment Coimbatore"
         />
 
         <meta property="og:title" content="Srusti Subav Realtors" />
@@ -84,6 +84,26 @@ export default function Home() {
           content="Premium residential plots, land investments and legally verified properties across Coimbatore and Tamil Nadu."
         />
         <meta property="og:type" content="website" />
+
+        {/* ===== STRUCTURED DATA ===== */}
+        <script type="application/ld+json">
+          {`
+          {
+            "@context": "https://schema.org",
+            "@type": "RealEstateAgent",
+            "name": "Srusti Subav Realtors",
+            "url": "https://www.srustisubavrealtors.com",
+            "logo": "https://www.srustisubavrealtors.com/images/logo.png",
+            "email": "info@srustisubavrealtors.com",
+            "areaServed": {
+              "@type": "Place",
+              "name": "Coimbatore, Tamil Nadu, India"
+            },
+            "description": "Trusted real estate advisory offering residential plots, land investments and legally verified properties in Coimbatore.",
+            "sameAs": []
+          }
+          `}
+        </script>
       </Helmet>
 
       {/* ================= HERO ================= */}
