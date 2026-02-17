@@ -6,6 +6,10 @@ import Properties from "./pages/Properties";
 import PropertyDetails from "./pages/PropertyDetails"; // ✅ ADDED (existing file)
 import Contact from "./pages/Contact";
 
+/* ✅ NEW PAGES */
+import About from "./pages/About";
+import Services from "./pages/Services";
+
 /* PUBLIC LAYOUT */
 import Layout from "./layouts/Layout";
 
@@ -24,8 +28,12 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/properties" element={<Properties />} />
 
-        {/* ✅ FIX: PROPERTY DETAILS ROUTE */}
+        {/* PROPERTY DETAILS */}
         <Route path="/properties/:id" element={<PropertyDetails />} />
+
+        {/* ✅ NEW ROUTES */}
+        <Route path="/about" element={<About />} />
+        <Route path="/services" element={<Services />} />
 
         <Route path="/contact" element={<Contact />} />
       </Route>

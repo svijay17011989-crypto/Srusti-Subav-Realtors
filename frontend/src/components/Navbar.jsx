@@ -21,6 +21,8 @@ const Navbar = () => {
         <nav className="flex items-center gap-8 text-sm uppercase tracking-wider">
           {[
             { to: "/", label: "Home" },
+            { to: "/about", label: "About" },        // ✅ ADDED
+            { to: "/services", label: "Services" },  // ✅ ADDED
             { to: "/properties", label: "Properties" },
             { to: "/contact", label: "Contact" },
           ].map((item) => (

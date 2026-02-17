@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "../api/axios";
 
-const fallbackImage = "/images/property1.jpg";
+const fallbackImage = "/images/sample.jpg";
 
 const Properties = () => {
   const [properties, setProperties] = useState([]);
