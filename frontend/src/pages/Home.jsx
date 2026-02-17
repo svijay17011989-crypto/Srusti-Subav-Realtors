@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import axios from "../api/axios";
 import PropertyCard from "../components/PropertyCard";
 import Testimonials from "../components/Testimonials";
@@ -61,6 +62,30 @@ export default function Home() {
 
   return (
     <>
+      {/* ================= SEO ================= */}
+      <Helmet>
+        <title>
+          Srusti Subav Realtors | Premium Plots & Real Estate in Coimbatore
+        </title>
+
+        <meta
+          name="description"
+          content="Srusti Subav Realtors offers DTCP approved residential plots, luxury apartments, joint ventures and agricultural lands across Coimbatore, Tamil Nadu & Kerala. Trusted real estate advisory for secure investments."
+        />
+
+        <meta
+          name="keywords"
+          content="Srusti Subav Realtors, real estate Coimbatore, DTCP plots Tamil Nadu, land investment Coimbatore, residential plots Coimbatore, agricultural land investment Kerala"
+        />
+
+        <meta property="og:title" content="Srusti Subav Realtors" />
+        <meta
+          property="og:description"
+          content="Premium residential plots, land investments and legally verified properties across Coimbatore and Tamil Nadu."
+        />
+        <meta property="og:type" content="website" />
+      </Helmet>
+
       {/* ================= HERO ================= */}
       <section className="relative h-screen overflow-hidden">
         {heroSlides.map((s, i) => (
@@ -70,7 +95,7 @@ export default function Home() {
               i === slide ? "opacity-100 z-10" : "opacity-0"
             }`}
           >
-            <img src={s.src} alt="" className="w-full h-full object-cover" />
+            <img src={s.src} alt="Srusti Subav Realtors Property" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/50" />
             <div className="absolute inset-0 flex items-center">
               <div className="max-w-7xl mx-auto px-6 text-white">
@@ -190,33 +215,23 @@ export default function Home() {
 
           <div className="grid md:grid-cols-3 gap-10">
             <div className="bg-white/10 p-6 rounded-lg">
-              <p>
-                Strategic property selection based on growth corridors
-              </p>
+              <p>Strategic property selection based on growth corridors</p>
             </div>
 
             <div className="bg-white/10 p-6 rounded-lg">
-              <p>
-                Transparent documentation and ethical business practices
-              </p>
+              <p>Transparent documentation and ethical business practices</p>
             </div>
 
             <div className="bg-white/10 p-6 rounded-lg">
-              <p>
-                Investor-friendly structuring with clear risk evaluation
-              </p>
+              <p>Investor-friendly structuring with clear risk evaluation</p>
             </div>
 
             <div className="bg-white/10 p-6 rounded-lg">
-              <p>
-                Long-term value focus, not short-term speculation
-              </p>
+              <p>Long-term value focus, not short-term speculation</p>
             </div>
 
             <div className="bg-white/10 p-6 rounded-lg">
-              <p>
-                Trusted guidance for both high-net-worth investors and end-users
-              </p>
+              <p>Trusted guidance for both high-net-worth investors and end-users</p>
             </div>
           </div>
         </div>
